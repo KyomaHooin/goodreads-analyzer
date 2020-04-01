@@ -1,7 +1,8 @@
+![CYBER](https://github.com/kyomahooin/goodreads-analyzer/raw/master/popular-cyberpunk.png "cyber")
 
 DESCRIPTION
 
-Simple goodreads.com data scraper and analyzer.
+Goodreads.com data scraper & analyzer.
 
 FILES
 <pre>
