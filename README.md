@@ -4,7 +4,7 @@ DESCRIPTION
 Simple goodreads.com data scraper and analyzer.
 
 FILES
-
+<pre>
                 goodreads - Main script.
 
     cyberpunk-dataset.csv - Cyberpunk dataset.
@@ -14,7 +14,7 @@ FILES
 popular-cyberpunk-all.png - Popular cyberpunk plot.
         popular-scifi.png - Sci-fi "gem" detail plot.
     popular-scifi-all.png - Popular sci-fi plot.
-
+</pre>
 SOURCE
 
 https://github.com/KyomaHooin/goodreads-analyzer
