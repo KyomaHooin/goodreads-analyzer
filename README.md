@@ -8,8 +8,9 @@ FILES
 <pre>
                 goodreads - Main script.
 
-    cyberpunk-dataset.csv - Cyberpunk dataset.
-        scifi-dataset.csv - Sci-fi dataset.
+    cyberpunk-dataset.csv - Popular Cyberpunk dataset. [ID;NAME;AUTHOR;URL;AVG RATING;RATING COUNT;YEAR]
+        scifi-dataset.csv - Popular Sci-fi dataset. [ID;NAME;AUTHOR;URL;AVG RATING;RATING COUNT;YEAR]
+   best-scifi-dataset.csv - Best of Sci-fi dataset. [ID;NAME;AUTHOR;URL;AVG RATING;RATING COUNT]
 
     popular-cyberpunk.png - Cyberpunk "gem" detail plot.
 popular-cyberpunk-all.png - Popular cyberpunk plot.
