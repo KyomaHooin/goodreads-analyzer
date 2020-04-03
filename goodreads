@@ -81,7 +81,6 @@ if args.scrap:
 			p = lxml.html.HTMLParser()
 			t = lxml.html.parse(StringIO.StringIO(req.text), p)
 			o = t.xpath("//div[@class='elementList']")
-		
 			# "Best SF list" modified parsing
 			#
 			#o = t.xpath("//tr[@itemtype='http://schema.org/Book']")
@@ -115,7 +114,7 @@ if args.scrap:
 
 				# "Best SF list" modified parsing
 				#
-				book = o[i].xpath(".//a[@class='bookTitle']//span")
+				#book = o[i].xpath(".//a[@class='bookTitle']//span")
 				#if book:
 				#	book_title = book[0].text.encode('utf-8')
 				#
@@ -147,7 +146,6 @@ if args.scrap:
 	print('\nDone.')
 
 	# WRITE DATASET
-
 	with open(OUTFILE, 'a') as f:
 		for BOOK in DATASET:
 			f.write(
@@ -165,9 +163,7 @@ if args.scrap:
 			)
 
 if args.plot:
-
 	# LOAD DATASET
-
 	DATASET={}
 
 	try:
@@ -187,8 +183,6 @@ if args.plot:
 		sys.exit(1)
 
 	# CLEANUP
-
-	#exclude "Shadowrun"
 	for BOOK in list(DATASET):
 		if re.match('.*Shadowrun.*', DATASET[BOOK]['title']):
 			del DATASET[BOOK]
@@ -257,7 +251,6 @@ if args.plot:
 	plt.axvline(x=mean([int(DATASET[book]['ratings']) for book in DATASET]), linewidth=1.5, color='r')
 
 	#  TUNE
-
 	plt.title(PLOT_TITLE, fontsize=14)
 	plt.xlabel('Number of ratings', fontsize=13)
 	plt.ylabel('Average Rating', fontsize=13)
