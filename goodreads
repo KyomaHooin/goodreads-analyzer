@@ -22,7 +22,7 @@ GOOD='https://www.goodreads.com'
 
 #SHELF = GOOD + '/shelf/show/cyberpunk'
 #SHELF = GOOD + '/shelf/show/science-fiction'
-SHELF = GOOD + '/list/show/19341.Best_Science_Fiction'
+#SHELF = GOOD + '/list/show/19341.Best_Science_Fiction'
 LAST_PAGE = 29
 
 PLOT_TITLE='Underrated Cyberpunk < 1990'
@@ -41,7 +41,15 @@ OUTPNG='underrated-cyberpunk-1990.png'
 parser = argparse.ArgumentParser(description='Goodreads Analyzer 1.1')
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('--scrap', help='Scrap HTML data.', action='store_true')
-group.add_argument('--plot', help='Plot & display scrap from CSV file.', action='store_true')
+group.add_argument('--plot', help='Plot scrap from CSV file.', action='store_true')
+group.add_argument('--filter', help='Filter data from CSV file.', action='store_true')
+#filter = parser.add_argument_group()
+#filter.add_argument('--rating-max', help='Maximum ratings.')
+#filter.add_argument('--rating-min', help='Minimum ratings.')
+#filter.add_argument('--year-max', help='Maximum year.')
+#filter.add_argument('--year-min', help='Minimum year.')
+#filter.add_argument('--avg-max', help='Average rating maximum.')
+#filter.add_argument('--avg-min', help='Average rating miminum.')
 args = parser.parse_args()
 
 #--------------------------------------
@@ -233,17 +241,6 @@ if args.plot:
 					markersize = 7		
 				)
 
-		# PRINT
-		if int(DATASET[BOOK]['ratings']) < 1000:
-			if float(DATASET[BOOK]['avg']) > 3.8:
-				if DATASET[BOOK]['year']:
-					if int(DATASET[BOOK]['year']) < 1990:
-						print(
-							DATASET[BOOK]['avg'] + ' - ' +
-							re.sub('[(].*', '', DATASET[BOOK]['title']).strip() + ' - ' +
-							DATASET[BOOK]['author']
-						)
-
 	# MEAN OF RATING AVERAGE
 	plt.axhline(y=mean([float(DATASET[book]['avg']) for book in DATASET]), linewidth=1.5, color='r')
 	# MEAN OF RATING COUNT
@@ -263,6 +260,58 @@ if args.plot:
 	# CREATE IMAGE
 	plt.savefig(filename=OUTPNG, format='png', dpi=120)
 	plt.close()
+
+if args.filter:
+	# LOAD DATASET
+	DATASET={}
+	try:
+		with open(OUTFILE, 'r') as f:
+			for line in f:
+				record = line.split(';')
+				DATASET[record[0]] = {
+					'title':record[1],
+					'author':record[2],
+					'url':record[3],
+					'avg':record[4],
+					'ratings':record[5],
+					'year':record[6].strip()
+				}
+	except:
+		print('Failed to load dataset.')
+		sys.exit(1)
+	
+	# CLEANUP
+	for BOOK in list(DATASET):
+		if re.match('.*Shadowrun.*', DATASET[BOOK]['title']):
+			del DATASET[BOOK]
+	for BOOK in list(DATASET):
+		if re.match('.*Transmetropolitan.*', DATASET[BOOK]['title']):
+			del DATASET[BOOK]
+	for BOOK in list(DATASET):
+		if re.match('.*Blame.*', DATASET[BOOK]['title']):
+			del DATASET[BOOK]
+	for BOOK in list(DATASET):
+		if re.match('.*Battle Angel.*', DATASET[BOOK]['title']):
+			del DATASET[BOOK]
+	for BOOK in list(DATASET):
+		if re.match('.*Appleseed.*', DATASET[BOOK]['title']):
+			del DATASET[BOOK]
+	for BOOK in list(DATASET):
+		if re.match('.*Vol.*', DATASET[BOOK]['title']):
+			del DATASET[BOOK]
+
+	for book in DATASET:
+		if int(DATASET[book]['ratings']) < 3000:
+			if float(DATASET[book]['avg']) > 3.8:
+				if DATASET[book]['year']:
+					if int(DATASET[book]['year']) < 2003:
+						print(
+							DATASET[book]['avg'] + ' - ' +
+							re.sub('[(].*', '', DATASET[book]['title']).strip() + ' - ' +
+							DATASET[book]['author']
+						)
+
+
 
 # EXIT
 
