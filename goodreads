@@ -234,15 +234,15 @@ if args.plot:
 				)
 
 		# PRINT
-		#if int(DATASET[BOOK]['ratings']) < 1000:
-		#	if float(DATASET[BOOK]['avg']) > 3.8:
-		#		if DATASET[BOOK]['year']:
-		#			if int(DATASET[BOOK]['year']) >= 2010:
-		#				print(
-		#					DATASET[BOOK]['avg'] + ' - ' +
-		#					re.sub('[(].*', '', DATASET[BOOK]['title']).strip() + ' - ' +
-		#					DATASET[BOOK]['author']
-		#				)
+		if int(DATASET[BOOK]['ratings']) < 2500:
+			if float(DATASET[BOOK]['avg']) > 4.0:
+				if DATASET[BOOK]['year']:
+					if int(DATASET[BOOK]['year']) < 1990:
+						print(
+							DATASET[BOOK]['avg'] + ' - ' +
+							re.sub('[(].*', '', DATASET[BOOK]['title']).strip() + ' - ' +
+							DATASET[BOOK]['author']
+						)
 
 	# MEAN OF RATING AVERAGE
 	plt.axhline(y=mean([float(DATASET[book]['avg']) for book in DATASET]), linewidth=1.5, color='r')
