@@ -27,14 +27,14 @@ LAST_PAGE = 29
 
 PLOT_TITLE='Underrated Cyberpunk < 1990'
 
-#OUTFILE='cyber-dataset.csv'
-#OUTPNG='underrated-cyberpunk-1990.png'
+OUTFILE='cyber-dataset.csv'
+OUTPNG='underrated-cyberpunk-1990.png'
 
 #OUTFILE='scifi-dataset.csv'
 #OUTPNG='popular-scifi-all.png'
 
-OUTFILE='best-scifi-dataset.csv'
-OUTPNG='best-scifi-all.png'
+#OUTFILE='best-scifi-dataset.csv'
+#OUTPNG='best-scifi-all.png'
 
 #--------------------------------------
 
@@ -234,8 +234,8 @@ if args.plot:
 				)
 
 		# PRINT
-		if int(DATASET[BOOK]['ratings']) < 2500:
-			if float(DATASET[BOOK]['avg']) > 4.0:
+		if int(DATASET[BOOK]['ratings']) < 1000:
+			if float(DATASET[BOOK]['avg']) > 3.8:
 				if DATASET[BOOK]['year']:
 					if int(DATASET[BOOK]['year']) < 1990:
 						print(
