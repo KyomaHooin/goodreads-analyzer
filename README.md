@@ -4,13 +4,19 @@ DESCRIPTION
 
 Goodreads.com data scraper & analyzer.
 
+DATASET FORMAT
+<pre>
+[book id;title;author;URL;average rating;rating count;year published]
+</pre>
+
+
 FILES
 <pre>
                    goodreads - Main script.
 
-        cyberpunk-dataset.csv - Popular Cyberpunk dataset. [ID;TITLE;AUTHOR;URL;AVG;COUNT;YEAR]
-            scifi-dataset.csv - Popular Sci-fi dataset.    [ID;TITLE;AUTHOR;URL;AVG;COUNT;YEAR]
-       best-scifi-dataset.csv - Best of Sci-fi dataset.    [ID;TITLE;AUTHOR;URL;AVG;COUNT]
+        cyberpunk-dataset.csv - Popular Cyberpunk dataset.
+            scifi-dataset.csv - Popular Sci-fi dataset.
+       best-scifi-dataset.csv - Best of Sci-fi dataset.
 
      underrated-cyberpunk.png - All hidden cyberpunk plot.
 underrated-cyberpunk-1990.png - Plot up to 1990.
