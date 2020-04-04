@@ -20,21 +20,21 @@ FIREFOX='/home/user/.mozilla/firefox/2wfpvx7b.default/cookies.sqlite'
 
 GOOD='https://www.goodreads.com'
 
-SHELF = GOOD + '/shelf/show/cyberpunk'
+#SHELF = GOOD + '/shelf/show/cyberpunk'
 #SHELF = GOOD + '/shelf/show/science-fiction'
-#SHELF = GOOD + '/list/show/19341.Best_Science_Fiction'
-LAST_PAGE = 25
+SHELF = GOOD + '/list/show/19341.Best_Science_Fiction'
+LAST_PAGE = 29
 
 PLOT_TITLE='Underrated Cyberpunk < 1990'
 
-OUTFILE='cyber-dataset.csv'
-OUTPNG='underrated-cyberpunk-1990.png'
+#OUTFILE='cyber-dataset.csv'
+#OUTPNG='underrated-cyberpunk-1990.png'
 
 #OUTFILE='scifi-dataset.csv'
 #OUTPNG='popular-scifi-all.png'
 
-#OUTFILE='best-scifi-dataset.csv'
-#OUTPNG='best-scifi-all.png'
+OUTFILE='best-scifi-dataset.csv'
+OUTPNG='best-scifi-all.png'
 
 #--------------------------------------
 
@@ -81,28 +81,20 @@ if args.scrap:
 			p = lxml.html.HTMLParser()
 			t = lxml.html.parse(StringIO.StringIO(req.text), p)
 			o = t.xpath("//div[@class='elementList']")
-			# "Best SF list" modified parsing
-			#
-			#o = t.xpath("//tr[@itemtype='http://schema.org/Book']")
-
 			for i in range(0,len(o)):
-
 				book = o[i].xpath(".//a[@class='bookTitle']")
 				if book:
 					book_title = book[0].text.encode('utf-8')
 					book_url = book[0].get('href').encode('utf-8')
 					book_id = re.sub('.*/(\d+).*', '\\1', book_url)
-
 				author = o[i].xpath(".//a[@class='authorName']//span")
 				if author:
 					book_author = author[0].text.encode('utf-8')
-
 				data = o[i].xpath(".//span[@class='greyText smallText']")
 				if data:
 					book_avg = re.findall('avg rating.*', data[0].text)
 					book_ratings = re.findall('.*ratings', data[0].text)
 					book_published = re.findall('published.*', data[0].text)
-				
 				DATASET[book_id] = {
 					'title':book_title.replace(';',' -'),
 					'author':book_author,
@@ -112,33 +104,43 @@ if args.scrap:
 					'year':re.sub('published (.*)', '\\1', book_published[0]).strip()
 				}
 
-				# "Best SF list" modified parsing
-				#
-				#book = o[i].xpath(".//a[@class='bookTitle']//span")
-				#if book:
-				#	book_title = book[0].text.encode('utf-8')
-				#
-				#url = o[i].xpath(".//a[@class='bookTitle']")
-				#if url:
-				#	book_url = url[0].get('href').encode('utf-8')
-				#	book_id = re.sub('.*/(\d+).*', '\\1', book_url)
-				#
-				#author = o[i].xpath(".//a[@class='authorName']//span")
-				#if author:
-				#	book_author = author[0].text.encode('utf-8')
-				#
-				#data = o[i].xpath(".//span[@class='greyText smallText uitext']//span[@class='minirating']/text()")
-				#if data:
-				#	book_avg = re.sub('(.*) avg.*', '\\1', data[0]).strip()
-				#	book_ratings = re.sub(u'.*\u2014(.*)ratings$', '\\1', data[0]).replace(',','').strip()
-				#
-				#DATASET[book_id] = {
-				#	'title':book_title.replace(';',' -'),
-				#	'author':book_author,
-				#	'url':book_url,
-				#	'avg':book_avg,
-				#	'ratings':book_ratings
-				#}
+			#p = lxml.html.HTMLParser()
+			#t = lxml.html.parse(StringIO.StringIO(req.text), p)
+			#o = t.xpath("//tr[@itemtype='http://schema.org/Book']")
+			#for i in range(0,len(o)):
+			#	book = o[i].xpath(".//a[@class='bookTitle']//span")
+			#	if book:
+			#		book_title = book[0].text.encode('utf-8')
+			#	url = o[i].xpath(".//a[@class='bookTitle']")
+			#	if url:
+			#		book_url = url[0].get('href').encode('utf-8')
+			#		book_id = re.sub('.*/(\d+).*', '\\1', book_url)
+			#		req = session.get(GOOD + book_url, cookies=COOKIES)
+			#		if req.status_code == 200:
+			#			p2 = lxml.html.HTMLParser()
+			#			t2 = lxml.html.parse(StringIO.StringIO(req.text), p2)
+			#			o2 = t2.xpath("//div[@id='details']//div[@class='row']")
+			#			book_year = ''
+			#			if len(o2) == 2:
+			#				book_year_match = re.findall('\d{4}', o2[1].text)
+			#				if book_year_match:
+			#					book_year = book_year_match[0]
+			#			else: print(book_url)
+			#	author = o[i].xpath(".//a[@class='authorName']//span")
+			#	if author:
+			#		book_author = author[0].text.encode('utf-8')
+			#	data = o[i].xpath(".//span[@class='greyText smallText uitext']//span[@class='minirating']/text()")
+			#	if data:
+			#		book_avg = re.sub('(.*) avg.*', '\\1', data[0]).strip()
+			#		book_ratings = re.sub(u'.*\u2014(.*)ratings$', '\\1', data[0]).replace(',','').strip()
+			#	DATASET[book_id] = {
+			#		'title':book_title.replace(';',' -'),
+			#		'author':book_author,
+			#		'url':book_url,
+			#		'avg':book_avg,
+			#		'ratings':book_ratings,
+			#		'year':book_year
+			#	}
 
 		# hold on a second..
 		time.sleep(1)
@@ -157,9 +159,6 @@ if args.scrap:
 				DATASET[BOOK]['avg'].encode('utf-8') + ';' +
 				DATASET[BOOK]['ratings'].encode('utf-8') + ';' +
 				DATASET[BOOK]['year'].encode('utf-8') + '\n'
-				# "Best SF" modified parsing
-				#
-				#DATASET[BOOK]['ratings'].encode('utf-8') + '\n'
 			)
 
 if args.plot:
