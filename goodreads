@@ -112,6 +112,8 @@ if args.scrap:
 					'year':re.sub('published (.*)', '\\1', book_published[0]).strip()
 				}
 
+			# Best of science-fiction custom parsing
+			#
 			#p = lxml.html.HTMLParser()
 			#t = lxml.html.parse(StringIO.StringIO(req.text), p)
 			#o = t.xpath("//tr[@itemtype='http://schema.org/Book']")
@@ -213,7 +215,6 @@ if args.plot:
 
 	# PLOT
 
-	#fig, ax = plt.subplots(figsize=(8,7))
 	plt.subplots(figsize=(5,5))
 
 	for BOOK in DATASET:
@@ -232,7 +233,7 @@ if args.plot:
 			#if int(DATASET[BOOK]['year']) >= 1990 and int(DATASET[BOOK]['year']) < 2003:
 			if int(DATASET[BOOK]['year']) < 1990:
 				plt.plot(
-					int(DATASET[BOOK]['ratings'].replace(',','')),
+					int(DATASET[BOOK]['ratings']),
 					float(DATASET[BOOK]['avg']),
 					'o',
 					markeredgewidth = 1.5,
@@ -252,7 +253,7 @@ if args.plot:
 	plt.ylabel('Average Rating', fontsize=13)
 	plt.grid(True)
 	plt.ticklabel_format(useOffset=True)
-	plt.yticks([round(x * 0.1, 1) for x in range(38, 51)])
+	plt.yticks([round(x * 0.1, 1) for x in range(38, 51)])# float range by Python..
 	plt.xlim(right=1000)
 	plt.ylim(3.8,5)
 	#plt.ylim(4,5)
