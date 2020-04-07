@@ -42,14 +42,15 @@ parser = argparse.ArgumentParser(description='Goodreads Analyzer 1.1')
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('--scrap', help='Scrap HTML data.', action='store_true')
 group.add_argument('--plot', help='Plot scrap from CSV file.', action='store_true')
-group.add_argument('--filter', help='Filter data from CSV file.', action='store_true')
-#filter = parser.add_argument_group()
-#filter.add_argument('--rating-max', help='Maximum ratings.')
-#filter.add_argument('--rating-min', help='Minimum ratings.')
-#filter.add_argument('--year-max', help='Maximum year.')
-#filter.add_argument('--year-min', help='Minimum year.')
-#filter.add_argument('--avg-max', help='Average rating maximum.')
-#filter.add_argument('--avg-min', help='Average rating miminum.')
+group.add_argument('--filter', help='Filter CSV data.', action='store_true')
+
+filter = parser.add_argument_group('Filter options')
+filter.add_argument('--year-min', help='Minimum year.', type=int, default=0)
+filter.add_argument('--year-max', help='Maximum year.', type=int, default=2048)
+filter.add_argument('--avg-min', help='Average rating min.', type=float, default=0)
+filter.add_argument('--avg-max', help='Average rating max.', type=float, default=5)
+filter.add_argument('--cnt-min', help='Avg rating count min.', type=int, default=0)
+filter.add_argument('--cnt-max', help='Avg rating count max.', type=int, default=1000000000)
 args = parser.parse_args()
 
 #--------------------------------------
@@ -282,39 +283,37 @@ if args.filter:
 		sys.exit(1)
 	
 	# CLEANUP
-	for BOOK in list(DATASET):
-		if re.match('.*Shadowrun.*', DATASET[BOOK]['title']):
-			del DATASET[BOOK]
-	for BOOK in list(DATASET):
-		if re.match('.*Transmetropolitan.*', DATASET[BOOK]['title']):
-			del DATASET[BOOK]
-	for BOOK in list(DATASET):
-		if re.match('.*Blame.*', DATASET[BOOK]['title']):
-			del DATASET[BOOK]
-	for BOOK in list(DATASET):
-		if re.match('.*Battle Angel.*', DATASET[BOOK]['title']):
-			del DATASET[BOOK]
-	for BOOK in list(DATASET):
-		if re.match('.*Appleseed.*', DATASET[BOOK]['title']):
-			del DATASET[BOOK]
-	for BOOK in list(DATASET):
-		if re.match('.*Vol.*', DATASET[BOOK]['title']):
-			del DATASET[BOOK]
+	for book in list(DATASET):
+		if re.match('.*Shadowrun.*', DATASET[book]['title']):
+			del DATASET[book]
+	for book in list(DATASET):
+		if re.match('.*Transmetropolitan.*', DATASET[book]['title']):
+			del DATASET[book]
+	for book in list(DATASET):
+		if re.match('.*Blame.*', DATASET[book]['title']):
+			del DATASET[book]
+	for book in list(DATASET):
+		if re.match('.*Battle Angel.*', DATASET[book]['title']):
+			del DATASET[book]
+	for book in list(DATASET):
+		if re.match('.*Appleseed.*', DATASET[book]['title']):
+			del DATASET[book]
+	for book in list(DATASET):
+		if re.match('.*Vol.*', DATASET[book]['title']):
+			del DATASET[book]
 
 	for book in DATASET:
-		if int(DATASET[book]['ratings']) < 3000:
-			if float(DATASET[book]['avg']) > 3.8:
-				if DATASET[book]['year']:
-					if int(DATASET[book]['year']) < 2003:
-						print(
-							DATASET[book]['avg'] + ' - ' +
-							re.sub('[(].*', '', DATASET[book]['title']).strip() + ' - ' +
-							DATASET[book]['author']
-						)
-
-
+		if not DATASET[book]['year']: DATASET[book]['year'] = 0# FIX: SCRAP..
+	
+		if int(DATASET[book]['year']) > args.year_min and int(DATASET[book]['year']) < args.year_max:
+			if float(DATASET[book]['avg']) > args.avg_min and float(DATASET[book]['avg']) < args.avg_max:
+				if int(DATASET[book]['ratings']) > args.cnt_min and int(DATASET[book]['ratings']) < args.cnt_max:
+					print(
+						DATASET[book]['avg'] + ' - ' +
+						re.sub('[(].*', '', DATASET[book]['title']).strip() + ' - ' +# FIX: SCRAP..
+						DATASET[book]['author']
+					)
 
 # EXIT
-
 sys.exit(0)
 
