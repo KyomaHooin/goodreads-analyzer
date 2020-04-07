@@ -43,7 +43,6 @@ group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('--scrap', help='Scrap HTML data.', action='store_true')
 group.add_argument('--plot', help='Plot scrap from CSV file.', action='store_true')
 group.add_argument('--filter', help='Filter CSV data.', action='store_true')
-
 filter = parser.add_argument_group('Filter options')
 filter.add_argument('--year-min', help='Minimum year.', type=int, default=0)
 filter.add_argument('--year-max', help='Maximum year.', type=int, default=2048)
@@ -218,9 +217,9 @@ if args.plot:
 
 	plt.subplots(figsize=(5,5))
 
-	for BOOK in DATASET:
+	for book in DATASET:
 		# COLOR BY YEAR
-		book_year = DATASET[BOOK]['year']
+		book_year = DATASET[book]['year']
 		if not book_year:
 			COLOR = '#F38460' # no year..
 		else:
@@ -230,12 +229,11 @@ if args.plot:
 			if int(book_year) >= 2010: COLOR = '#C2B280' #
 
 		# SCATTER
-		if DATASET[BOOK]['year']:
-			#if int(DATASET[BOOK]['year']) >= 1990 and int(DATASET[BOOK]['year']) < 2003:
-			if int(DATASET[BOOK]['year']) < 1990:
+		if DATASET[book]['year']:
+			if int(DATASET[book]['year']) > args.year_min and int(DATASET[book]['year']) < args.year_max:
 				plt.plot(
-					int(DATASET[BOOK]['ratings']),
-					float(DATASET[BOOK]['avg']),
+					int(DATASET[book]['ratings']),
+					float(DATASET[book]['avg']),
 					'o',
 					markeredgewidth = 1.5,
 					markeredgecolor = 'black',
@@ -255,9 +253,8 @@ if args.plot:
 	plt.grid(True)
 	plt.ticklabel_format(useOffset=True)
 	plt.yticks([round(x * 0.1, 1) for x in range(38, 51)])# float range by Python..
-	plt.xlim(right=1000)
-	plt.ylim(3.8,5)
-	#plt.ylim(4,5)
+	plt.xlim(right=args.cnt_max)
+	plt.ylim(args.avg_min,args.avg_max)
 
 	# CREATE IMAGE
 	plt.savefig(filename=OUTPNG, format='png', dpi=120)
@@ -304,7 +301,6 @@ if args.filter:
 
 	for book in DATASET:
 		if not DATASET[book]['year']: DATASET[book]['year'] = 0# FIX: SCRAP..
-	
 		if int(DATASET[book]['year']) > args.year_min and int(DATASET[book]['year']) < args.year_max:
 			if float(DATASET[book]['avg']) > args.avg_min and float(DATASET[book]['avg']) < args.avg_max:
 				if int(DATASET[book]['ratings']) > args.cnt_min and int(DATASET[book]['ratings']) < args.cnt_max:
