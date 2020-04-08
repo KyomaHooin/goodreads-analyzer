@@ -57,7 +57,6 @@ args = parser.parse_args()
 print('Goodreads Analyzer 1.0\n')
 
 if args.scrap:
-
 	# COOKIE
 	#
 	# https://goodreads.com -> Remember login -> Login -> Quit
@@ -159,16 +158,16 @@ if args.scrap:
 
 	# WRITE DATASET
 	with open(OUTFILE, 'a') as f:
-		for BOOK in DATASET:
+		for book in DATASET:
 			f.write(
 
-				str(BOOK) + ';' +
-				DATASET[BOOK]['title'] + ';' +
-				DATASET[BOOK]['author'] + ';' +
-				DATASET[BOOK]['url'] + ';' +
-				DATASET[BOOK]['avg'].encode('utf-8') + ';' +
-				DATASET[BOOK]['ratings'].encode('utf-8') + ';' +
-				DATASET[BOOK]['year'].encode('utf-8') + '\n'
+				str(book) + ';' +
+				DATASET[book]['title'] + ';' +
+				DATASET[book]['author'] + ';' +
+				DATASET[book]['url'] + ';' +
+				DATASET[book]['avg'].encode('utf-8') + ';' +
+				DATASET[book]['ratings'].encode('utf-8') + ';' +
+				DATASET[book]['year'].encode('utf-8') + '\n'
 			)
 
 if args.plot:
@@ -192,29 +191,16 @@ if args.plot:
 		sys.exit(1)
 
 	# CLEANUP
-	for BOOK in list(DATASET):
-		if re.match('.*Shadowrun.*', DATASET[BOOK]['title']):
-			del DATASET[BOOK]
-	for BOOK in list(DATASET):
-		if re.match('.*Transmetropolitan.*', DATASET[BOOK]['title']):
-			del DATASET[BOOK]
-	for BOOK in list(DATASET):
-		if re.match('.*Blame.*', DATASET[BOOK]['title']):
-			del DATASET[BOOK]
-	for BOOK in list(DATASET):
-		if re.match('.*Battle Angel.*', DATASET[BOOK]['title']):
-			del DATASET[BOOK]
-	for BOOK in list(DATASET):
-		if re.match('.*Appleseed.*', DATASET[BOOK]['title']):
-			del DATASET[BOOK]
-	for BOOK in list(DATASET):
-		if re.match('.*Vol.*', DATASET[BOOK]['title']):
-			del DATASET[BOOK]
+	for book in DATASET.keys():
+		for s in ('Shadowrun','Transmetropolitan','Blame','Battle Angel','Appleaseed','Vol'):
+			try:
+				if re.match('.*' + s + '.*', DATASET[book]['title']):
+					del DATASET[book]
+			except: pass
 
 	print('Generating plot .. (this may take a while)')
 
 	# PLOT
-
 	plt.subplots(figsize=(5,5))
 
 	for book in DATASET:
@@ -280,25 +266,14 @@ if args.filter:
 		sys.exit(1)
 	
 	# CLEANUP
-	for book in list(DATASET):
-		if re.match('.*Shadowrun.*', DATASET[book]['title']):
-			del DATASET[book]
-	for book in list(DATASET):
-		if re.match('.*Transmetropolitan.*', DATASET[book]['title']):
-			del DATASET[book]
-	for book in list(DATASET):
-		if re.match('.*Blame.*', DATASET[book]['title']):
-			del DATASET[book]
-	for book in list(DATASET):
-		if re.match('.*Battle Angel.*', DATASET[book]['title']):
-			del DATASET[book]
-	for book in list(DATASET):
-		if re.match('.*Appleseed.*', DATASET[book]['title']):
-			del DATASET[book]
-	for book in list(DATASET):
-		if re.match('.*Vol.*', DATASET[book]['title']):
-			del DATASET[book]
-
+	for book in DATASET.keys():
+		for s in ('Shadowrun','Transmetropolitan','Blame','Battle Angel','Appleaseed','Vol'):
+			try:
+				if re.match('.*' + s + '.*', DATASET[book]['title']):
+					del DATASET[book]
+			except: pass
+		
+	# FILTER
 	for book in DATASET:
 		if not DATASET[book]['year']: DATASET[book]['year'] = 0# FIX: SCRAP..
 		if int(DATASET[book]['year']) > args.year_min and int(DATASET[book]['year']) < args.year_max:
