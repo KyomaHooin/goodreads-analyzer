@@ -23,18 +23,16 @@ GOOD='https://www.goodreads.com'
 #SHELF = GOOD + '/shelf/show/cyberpunk'
 #SHELF = GOOD + '/shelf/show/science-fiction'
 #SHELF = GOOD + '/list/show/19341.Best_Science_Fiction'
+
 LAST_PAGE = 29
 
-PLOT_TITLE='Underrated Cyberpunk < 1990'
-
-OUTFILE='cyber-dataset.csv'
-OUTPNG='underrated-cyberpunk-1990.png'
-
+#OUTFILE='cyber-dataset.csv'
 #OUTFILE='scifi-dataset.csv'
-#OUTPNG='popular-scifi-all.png'
+OUTFILE='best-scifi-dataset.csv'
 
-#OUTFILE='best-scifi-dataset.csv'
-#OUTPNG='best-scifi-all.png'
+OUTPNG='best-scifi-all.png'
+
+PLOT_TITLE='Underrated Cyberpunk < 1990'
 
 #--------------------------------------
 
@@ -192,7 +190,7 @@ if args.plot:
 
 	# CLEANUP
 	for book in DATASET.keys():
-		for s in ('Shadowrun','Transmetropolitan','Blame','Battle Angel','Appleaseed','Vol'):
+		for s in ('Shadowrun','Transmetropolitan','Blame','Battle Angel','Appleseed','Vol'):
 			try:
 				if re.match('.*' + s + '.*', DATASET[book]['title']):
 					del DATASET[book]
@@ -206,7 +204,7 @@ if args.plot:
 	for book in DATASET:
 		# COLOR BY YEAR
 		book_year = DATASET[book]['year']
-		if not book_year:
+		if not book_year:# FIX: SCRAP ..
 			COLOR = '#F38460' # no year..
 		else:
 			if int(book_year) < 1990: COLOR = '#008856'# green
