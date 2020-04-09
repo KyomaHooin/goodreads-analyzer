@@ -265,7 +265,7 @@ if args.filter:
 	
 	# CLEANUP
 	for book in DATASET.keys():
-		for s in ('Shadowrun','Transmetropolitan','Blame','Battle Angel','Appleaseed','Vol'):
+		for s in ('Shadowrun','Transmetropolitan','Blame','Battle Angel','Appleseed','Vol'):
 			try:
 				if re.match('.*' + s + '.*', DATASET[book]['title']):
 					del DATASET[book]
