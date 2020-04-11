@@ -18,10 +18,7 @@ FILES
             scifi-dataset.csv - Popular Sci-fi dataset.
        best-scifi-dataset.csv - Best of Sci-fi dataset.
 
-     underrated-cyberpunk.png - All hidden cyberpunk plot.
-underrated-cyberpunk-1990.png - Plot up to 1990.
-underrated-cyberpunk-2003.png - Plot from 1990 - 2003.
-underrated-cyberpunk-2010.png - Plot from 2003 - 2010.
+     underrated-cyberpunk.png - Underrated cyberpunk plot.
 </pre>
 SOURCE
 
