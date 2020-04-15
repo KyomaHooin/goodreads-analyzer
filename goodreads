@@ -26,9 +26,9 @@ GOOD='https://www.goodreads.com'
 
 LAST_PAGE = 29
 
-OUTFILE='cyber-dataset.json'
+#OUTFILE='cyber-dataset.json'
 #OUTFILE='scifi-dataset.json'
-#OUTFILE='best-scifi-dataset.json'
+OUTFILE='best-scifi-dataset.json'
 
 OUTPNG='best-scifi-all.png'
 
@@ -243,8 +243,8 @@ if args.filter:
 				if DATASET[book]['ratings'] > args.cnt_min and DATASET[book]['ratings'] < args.cnt_max:
 					print(
 						str(DATASET[book]['avg']) + ' - ' +
-						DATASET[book]['title'] + ' - ' +
-						DATASET[book]['author']
+						DATASET[book]['title'].encode('utf-8') + ' - ' +
+						DATASET[book]['author'].encode('utf-8')
 					)
 
 # EXIT
