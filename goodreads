@@ -183,8 +183,8 @@ if args.plot:
 		# COLOR BY YEAR
 		if DATASET[book]['year'] == 0: COLOR = '#F38460' # red-orange
 		if DATASET[book]['year'] < 1990: COLOR = '#008856' # green
-		if DATASET[book]['year'] >= 1990 and int(book_year) < 2003: COLOR = '#F3C300' # yellow
-		if DATASET[book]['year'] >= 2003 and int(book_year) < 2010: COLOR = '#A1CAF1' # blue
+		if DATASET[book]['year'] >= 1990 and DATASET[book]['year'] < 2003: COLOR = '#F3C300' # yellow
+		if DATASET[book]['year'] >= 2003 and DATASET[book]['year'] < 2010: COLOR = '#A1CAF1' # blue
 		if DATASET[book]['year'] >= 2010: COLOR = '#C2B280' # brown
 
 		# SCATTER
