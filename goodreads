@@ -10,7 +10,7 @@
 # https://www.goodreads.com/list/show/19341.Best_Science_Fiction (p.1-29)
 #
 
-import sqlite3,requests,StringIO,lxml.html,argparse,numpy,time,sys,re
+import sqlite3,requests,StringIO,lxml.html,argparse,numpy,json,time,sys,re
 import matplotlib.pyplot as plt
 from numpy import mean
 
@@ -26,9 +26,9 @@ GOOD='https://www.goodreads.com'
 
 LAST_PAGE = 29
 
-#OUTFILE='cyber-dataset.csv'
-#OUTFILE='scifi-dataset.csv'
-OUTFILE='best-scifi-dataset.csv'
+OUTFILE='cyber-dataset.json'
+#OUTFILE='scifi-dataset.json'
+#OUTFILE='best-scifi-dataset.json'
 
 OUTPNG='best-scifi-all.png'
 
@@ -101,12 +101,12 @@ if args.scrap:
 					book_ratings = re.findall('.*ratings', data[0].text)
 					book_published = re.findall('published.*', data[0].text)
 				DATASET[book_id] = {
-					'title':book_title.replace(';',' -'),
+					'title':re.sub('[(].*', '', book_title.replace(';',' -')).strip(),
 					'author':book_author,
 					'url':book_url,
-					'avg': re.sub('avg rating (.*) .*', '\\1', book_avg[0]),
-					'ratings':re.sub('(.*) ratings.*', '\\1', book_ratings[0]).replace(',','').strip(),
-					'year':re.sub('published (.*)', '\\1', book_published[0]).strip()
+					'avg':float(re.sub('avg rating (.*) .*', '\\1', book_avg[0])),
+					'ratings':int(re.sub('(.*) ratings.*', '\\1', book_ratings[0]).replace(',','').strip()),
+					'year':int(re.sub('published (.*)', '\\1', book_published[0]).strip())
 				}
 
 			# Best of science-fiction custom parsing
@@ -155,35 +155,13 @@ if args.scrap:
 	print('\nDone.')
 
 	# WRITE DATASET
-	with open(OUTFILE, 'a') as f:
-		for book in DATASET:
-			f.write(
-
-				str(book) + ';' +
-				DATASET[book]['title'] + ';' +
-				DATASET[book]['author'] + ';' +
-				DATASET[book]['url'] + ';' +
-				DATASET[book]['avg'].encode('utf-8') + ';' +
-				DATASET[book]['ratings'].encode('utf-8') + ';' +
-				DATASET[book]['year'].encode('utf-8') + '\n'
-			)
+	with open(OUTFILE, 'w') as f: json.dump(DATASET, f)
 
 if args.plot:
 	# LOAD DATASET
 	DATASET={}
-
 	try:
-		with open(OUTFILE, 'r') as f:
-			for line in f:
-				record = line.split(';')
-				DATASET[record[0]] = {
-					'title':record[1],
-					'author':record[2],
-					'url':record[3],
-					'avg':record[4],
-					'ratings':record[5],
-					'year':record[6].strip()
-				}
+		with open(OUTFILE, 'r') as f: DATASET = json.load(f)
 	except:
 		print('Failed to load dataset.')
 		sys.exit(1)
@@ -203,21 +181,18 @@ if args.plot:
 
 	for book in DATASET:
 		# COLOR BY YEAR
-		book_year = DATASET[book]['year']
-		if not book_year:# FIX: SCRAP ..
-			COLOR = '#F38460' # no year..
-		else:
-			if int(book_year) < 1990: COLOR = '#008856'# green
-			if int(book_year) >= 1990 and int(book_year) < 2003: COLOR = '#F3C300' # yellow
-			if int(book_year) >= 2003 and int(book_year) < 2010: COLOR = '#A1CAF1' #
-			if int(book_year) >= 2010: COLOR = '#C2B280' #
+		if DATASET[book]['year'] == 0: COLOR = '#F38460' # red-orange
+		if DATASET[book]['year'] < 1990: COLOR = '#008856' # green
+		if DATASET[book]['year'] >= 1990 and int(book_year) < 2003: COLOR = '#F3C300' # yellow
+		if DATASET[book]['year'] >= 2003 and int(book_year) < 2010: COLOR = '#A1CAF1' # blue
+		if DATASET[book]['year'] >= 2010: COLOR = '#C2B280' # brown
 
 		# SCATTER
 		if DATASET[book]['year']:
-			if int(DATASET[book]['year']) > args.year_min and int(DATASET[book]['year']) < args.year_max:
+			if DATASET[book]['year'] > args.year_min and DATASET[book]['year'] < args.year_max:
 				plt.plot(
-					int(DATASET[book]['ratings']),
-					float(DATASET[book]['avg']),
+					DATASET[book]['ratings'],
+					DATASET[book]['avg'],
 					'o',
 					markeredgewidth = 1.5,
 					markeredgecolor = 'black',
@@ -226,9 +201,9 @@ if args.plot:
 				)
 
 	# MEAN OF RATING AVERAGE
-	plt.axhline(y=mean([float(DATASET[book]['avg']) for book in DATASET]), linewidth=1.5, color='r')
+	plt.axhline(y=mean([DATASET[book]['avg'] for book in DATASET]), linewidth=1.5, color='r')
 	# MEAN OF RATING COUNT
-	plt.axvline(x=mean([int(DATASET[book]['ratings']) for book in DATASET]), linewidth=1.5, color='r')
+	plt.axvline(x=mean([DATASET[book]['ratings'] for book in DATASET]), linewidth=1.5, color='r')
 
 	#  TUNE
 	plt.title(PLOT_TITLE, fontsize=14)
@@ -248,17 +223,7 @@ if args.filter:
 	# LOAD DATASET
 	DATASET={}
 	try:
-		with open(OUTFILE, 'r') as f:
-			for line in f:
-				record = line.split(';')
-				DATASET[record[0]] = {
-					'title':record[1],
-					'author':record[2],
-					'url':record[3],
-					'avg':record[4],
-					'ratings':record[5],
-					'year':record[6].strip()
-				}
+		with open(OUTFILE, 'r') as f: DATASET = json.load(f)
 	except:
 		print('Failed to load dataset.')
 		sys.exit(1)
@@ -273,13 +238,12 @@ if args.filter:
 		
 	# FILTER
 	for book in DATASET:
-		if not DATASET[book]['year']: DATASET[book]['year'] = 0# FIX: SCRAP..
-		if int(DATASET[book]['year']) > args.year_min and int(DATASET[book]['year']) < args.year_max:
-			if float(DATASET[book]['avg']) > args.avg_min and float(DATASET[book]['avg']) < args.avg_max:
-				if int(DATASET[book]['ratings']) > args.cnt_min and int(DATASET[book]['ratings']) < args.cnt_max:
+		if DATASET[book]['year'] > args.year_min and DATASET[book]['year'] < args.year_max:
+			if DATASET[book]['avg'] > args.avg_min and DATASET[book]['avg'] < args.avg_max:
+				if DATASET[book]['ratings'] > args.cnt_min and DATASET[book]['ratings'] < args.cnt_max:
 					print(
-						DATASET[book]['avg'] + ' - ' +
-						re.sub('[(].*', '', DATASET[book]['title']).strip() + ' - ' +# FIX: SCRAP..
+						str(DATASET[book]['avg']) + ' - ' +
+						DATASET[book]['title'] + ' - ' +
 						DATASET[book]['author']
 					)
 
