@@ -28,7 +28,7 @@ LAST_PAGE = 29
 
 #OUTFILE='cyber-dataset.json'
 #OUTFILE='scifi-dataset.json'
-OUTFILE='best-scifi-dataset.json'
+UTFILE='best-scifi-dataset.json'
 
 OUTPNG='best-scifi-all.png'
 
