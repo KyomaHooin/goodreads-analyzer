@@ -211,7 +211,7 @@ if args.plot:
 	plt.grid(True)
 	plt.ticklabel_format(useOffset=True)
 	plt.yticks([round(x * 0.1, 1) for x in range(38, 51)])# float range by Python..
-	plt.xlim(right=args.cnt_max)
+	plt.xlim(args.cnt_min,args.cnt_max)
 	plt.ylim(args.avg_min,args.avg_max)
 
 	# CREATE IMAGE
