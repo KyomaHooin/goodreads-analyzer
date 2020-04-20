@@ -34,17 +34,13 @@ group.add_argument('--scrap', help='Scrap HTML data.', dest='JSON')
 group.add_argument('--plot', help='Plot image from data.', nargs=3, metavar=('JSON', 'TITLE', 'IMAGE'))
 group.add_argument('--filter', help='Filter data.', dest='JSON')
 filter = parser.add_argument_group('Filter options')
-filter.add_argument('--year-min', help='[0] Minimum year.', type=int, default=0)
-filter.add_argument('--year-max', help='[2048] Maximum year.', type=int, default=2048)
-filter.add_argument('--avg-min', help='[0] Average rating min.', type=float, default=0)
-filter.add_argument('--avg-max', help='[5] Average rating max.', type=float, default=5)
-filter.add_argument('--cnt-min', help='[0] Avg rating count min.', type=int, default=0)
-filter.add_argument('--cnt-max', help='[10000000000] Avg rating count max.', type=int, default=1000000000)
+filter.add_argument('--year-min', help='Minimum year.', type=int, default=0)
+filter.add_argument('--year-max', help='Maximum year.', type=int, default=2048)
+filter.add_argument('--avg-min', help='Average rating min. [0-5]', type=float, default=0)
+filter.add_argument('--avg-max', help='Average rating max. [0-5]', type=float, default=5)
+filter.add_argument('--cnt-min', help='Avg rating count min.', type=int, default=0)
+filter.add_argument('--cnt-max', help='Avg rating count max.', type=int, default=1000000000)
 args = parser.parse_args()
-
-print(args)
-
-sys.exit(1)
 
 #--------------------------------------
 
