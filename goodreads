@@ -30,9 +30,9 @@ LAST_PAGE = 29
 
 parser = argparse.ArgumentParser(description='Goodreads Analyzer 1.1')
 group = parser.add_mutually_exclusive_group(required=True)
-group.add_argument('--scrap', help='Scrap HTML data.', dest='JSON')
+group.add_argument('--scrap', help='Scrap HTML data.', nargs=1, metavar='JSON')
 group.add_argument('--plot', help='Plot image from data.', nargs=3, metavar=('JSON', 'TITLE', 'IMAGE'))
-group.add_argument('--filter', help='Filter data.', dest='JSON')
+group.add_argument('--filter', help='Filter data.', nargs=1, metavar='JSON')
 filter = parser.add_argument_group('Filter options')
 filter.add_argument('--year-min', help='Minimum year.', type=int, default=0)
 filter.add_argument('--year-max', help='Maximum year.', type=int, default=2048)
@@ -148,7 +148,7 @@ if args.scrap:
 
 	# WRITE DATASET
 	try:
-		with open(JSON, 'w') as f: json.dump(DATASET, f)
+		with open(args.scrap[0], 'w') as f: json.dump(DATASET, f)
 	except:
 		print('Failed to write dataset.')
 		sys.exit(1)
@@ -218,7 +218,7 @@ if args.filter:
 	# LOAD DATASET
 	DATASET={}
 	try:
-		with open(JSON, 'r') as f: DATASET = json.load(f)
+		with open(args.filter[0], 'r') as f: DATASET = json.load(f)
 	except:
 		print('Failed to load dataset.')
 		sys.exit(1)
