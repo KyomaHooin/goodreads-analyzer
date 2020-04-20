@@ -26,29 +26,25 @@ GOOD='https://www.goodreads.com'
 
 LAST_PAGE = 29
 
-#OUTFILE='cyber-dataset.json'
-#OUTFILE='scifi-dataset.json'
-OUTFILE='best-scifi-dataset.json'
-
-OUTPNG='best-scifi-all.png'
-
-PLOT_TITLE='Underrated Cyberpunk < 1990'
-
 #--------------------------------------
 
 parser = argparse.ArgumentParser(description='Goodreads Analyzer 1.1')
 group = parser.add_mutually_exclusive_group(required=True)
-group.add_argument('--scrap', help='Scrap HTML data.', action='store_true')
-group.add_argument('--plot', help='Plot scrap from CSV file.', action='store_true')
-group.add_argument('--filter', help='Filter CSV data.', action='store_true')
+group.add_argument('--scrap', help='Scrap HTML data.', dest='JSON')
+group.add_argument('--plot', help='Plot image from data.', nargs=3, metavar=('JSON', 'TITLE', 'IMAGE'))
+group.add_argument('--filter', help='Filter data.', dest='JSON')
 filter = parser.add_argument_group('Filter options')
-filter.add_argument('--year-min', help='Minimum year.', type=int, default=0)
-filter.add_argument('--year-max', help='Maximum year.', type=int, default=2048)
-filter.add_argument('--avg-min', help='Average rating min.', type=float, default=0)
-filter.add_argument('--avg-max', help='Average rating max.', type=float, default=5)
-filter.add_argument('--cnt-min', help='Avg rating count min.', type=int, default=0)
-filter.add_argument('--cnt-max', help='Avg rating count max.', type=int, default=1000000000)
+filter.add_argument('--year-min', help='[0] Minimum year.', type=int, default=0)
+filter.add_argument('--year-max', help='[2048] Maximum year.', type=int, default=2048)
+filter.add_argument('--avg-min', help='[0] Average rating min.', type=float, default=0)
+filter.add_argument('--avg-max', help='[5] Average rating max.', type=float, default=5)
+filter.add_argument('--cnt-min', help='[0] Avg rating count min.', type=int, default=0)
+filter.add_argument('--cnt-max', help='[10000000000] Avg rating count max.', type=int, default=1000000000)
 args = parser.parse_args()
+
+print(args)
+
+sys.exit(1)
 
 #--------------------------------------
 
@@ -155,13 +151,17 @@ if args.scrap:
 	print('\nDone.')
 
 	# WRITE DATASET
-	with open(OUTFILE, 'w') as f: json.dump(DATASET, f)
-
+	try:
+		with open(JSON, 'w') as f: json.dump(DATASET, f)
+	except:
+		print('Failed to write dataset.')
+		sys.exit(1)
+	
 if args.plot:
 	# LOAD DATASET
 	DATASET={}
 	try:
-		with open(OUTFILE, 'r') as f: DATASET = json.load(f)
+		with open(args.plot[0], 'r') as f: DATASET = json.load(f)
 	except:
 		print('Failed to load dataset.')
 		sys.exit(1)
@@ -205,7 +205,7 @@ if args.plot:
 	plt.axvline(x=mean([DATASET[book]['ratings'] for book in DATASET]), linewidth=1.5, color='r')
 
 	#  TUNE
-	plt.title(PLOT_TITLE, fontsize=14)
+	plt.title(args.plot[1], fontsize=14)
 	plt.xlabel('Number of ratings', fontsize=13)
 	plt.ylabel('Average Rating', fontsize=13)
 	plt.grid(True)
@@ -215,14 +215,14 @@ if args.plot:
 	plt.ylim(args.avg_min,args.avg_max)
 
 	# CREATE IMAGE
-	plt.savefig(filename=OUTPNG, format='png', dpi=120)
+	plt.savefig(filename=args.plot[2], format='png', dpi=120)
 	plt.close()
 
 if args.filter:
 	# LOAD DATASET
 	DATASET={}
 	try:
-		with open(OUTFILE, 'r') as f: DATASET = json.load(f)
+		with open(JSON, 'r') as f: DATASET = json.load(f)
 	except:
 		print('Failed to load dataset.')
 		sys.exit(1)
