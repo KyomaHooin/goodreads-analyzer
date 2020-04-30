@@ -184,7 +184,7 @@ if args.plot:
 		if DATASET[book]['year'] >= 2010: COLOR = '#C2B280' # brown
 
 		# SCATTER
-		if DATASET[book]['year'] > args.year_min and DATASET[book]['year'] < args.year_max:
+		if DATASET[book]['year'] >= args.year_min and DATASET[book]['year'] < args.year_max:
 			plt.plot(
 				DATASET[book]['ratings'],
 				DATASET[book]['avg'],
