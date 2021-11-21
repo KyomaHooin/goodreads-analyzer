@@ -2,16 +2,18 @@
 
 DESCRIPTION
 
-Goodreads.com data scraper & analyzer.
+Book data scraper & analyzer.
 
 FILES
 <pre>
-               goodreads - Goodreads.com scrap/plot/filter.
-                   legie - Czech sci-fi database scrap/filter.
+               goodreads - goodreads.com
+            databazeknih - databazeknih.cz
+                   legie - legie.info
 
   cyberpunk-dataset.json - Popular Cyberpunk dataset.
       scifi-dataset.json - Popular Sci-fi dataset.
  best-scifi-dataset.json - Best of Sci-fi dataset.
+       databazeknih.json - Sci-fi dataset.
               legie.json - Sci-fi dataset.
 
 underrated-cyberpunk.png - Underrated cyberpunk plot.

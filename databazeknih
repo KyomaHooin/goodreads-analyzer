@@ -1,0 +1,84 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import requests,StringIO,lxml.html,json,time,sys,re
+
+#--------------------------------------
+
+BASE='https://www.databazeknih.cz/'
+DK=BASE + 'zanry/sci-fi-19?orderBy=up&pageNumber=' # 1-140
+
+#--------------------------------------
+
+
+# FILTER
+
+DATASET=[]
+
+with open('databazeknih.json', 'r') as f: DATASET = json.load(f)
+
+print('<html><head></head><body><table>')
+
+for book in DATASET:
+	if book['avg'] > 80 and book['avg'] < 100:
+		if book['cnt'] > 50 and book['cnt'] < 100:
+			print(
+				'<tr><td>' + str(book['avg']) + '</td><td>' +
+				book['title'].encode('utf-8') + '</td><td>' +
+				book['author'].encode('utf-8') + '</td><td><a target="_blank" href="' +
+				BASE + book['link'].encode('utf-8') + '">URL</a></td></tr>'
+			)
+
+print('</table></body></html>')
+
+sys.exit(1)
+
+# HARVEST
+
+DATASET = []
+
+session = requests.Session()
+session.headers.update({'User-Agent' : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0'})
+
+for PAGE in range(1,141):# 1-140
+	
+	req = session.get(DK + str(PAGE))
+	p = lxml.html.HTMLParser()
+
+	if req.status_code == 200:
+		txt  = lxml.html.parse(StringIO.StringIO(req.text), p)
+
+		data = txt.xpath("//div[@id='left_less']//a")
+
+		for i in range(0,len(data)):
+
+			link,title,author,rating,count='','','',0,0
+	
+			if 'href' in data[i].attrib: link = data[i].attrib['href']
+		
+			if 'knihy/' in link:
+
+				t = data[i].xpath(".//div[@class='title']/text()")
+				a = data[i].xpath(".//div[@class='desc']/text()")
+				if t: title = t[0].strip()
+				if a: author = a[0].strip()
+
+				req = session.get(BASE + link)
+				if req.status_code == 200:
+					txt = lxml.html.parse(StringIO.StringIO(req.text), p)
+
+					r = txt.xpath("//div[@class='hodnoceni_4']/text()")
+					c = txt.xpath("//a[@class='bpointsm']/text()")
+					
+					if r: rating = int(r[0])
+					if c: count = int(re.sub('^(\d+).*','\\1',c[0]))
+
+					# update dataset
+					DATASET.append({'title':title,'author':author, 'avg':rating,'cnt':count,'link':link})
+					# do not stress the server..
+					time.sleep(1)
+
+with open('databazeknih.json', 'w') as f: json.dump(DATASET, f)
+
+session.close()
+
